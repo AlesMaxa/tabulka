@@ -42,11 +42,15 @@
         </div>
         <div>
           <label for="projectid">Project ID:</label>
-          <input
-            type="number"
-            v-model.number="currentTask.projectid"
-            required
-          />
+          <select v-model.number="currentTask.projectid" required>
+            <option
+              v-for="project in projects"
+              :key="project.id"
+              :value="project.id"
+            >
+              {{ project.id }} - {{ project.project }}
+            </option>
+          </select>
         </div>
         <div>
           <label for="completed">Completed:</label>
@@ -74,6 +78,7 @@ export default {
   data() {
     return {
       tasks: [],
+      projects: [], // Pole pro uložení projektů
       showForm: false,
       isEditing: false,
       currentTask: {
@@ -88,6 +93,7 @@ export default {
   },
   created() {
     this.fetchTasks();
+    this.fetchProjects(); // Načítání projektů při vytvoření komponenty
   },
   methods: {
     async fetchTasks() {
@@ -96,6 +102,16 @@ export default {
         this.tasks = response.data.data;
       } catch (error) {
         console.error("Error fetching tasks:", error);
+      }
+    },
+    async fetchProjects() {
+      try {
+        const response = await axios.get(
+          "https://sdaapi.glabazna.eu/js6projects"
+        );
+        this.projects = response.data.data;
+      } catch (error) {
+        console.error("Error fetching projects:", error);
       }
     },
     async addTask() {
@@ -170,5 +186,75 @@ export default {
 </script>
 
 <style>
-/* Stylování zůstává stejné */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #ddd;
+}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4caf50;
+  color: white;
+}
+
+form {
+  margin-top: 20px;
+}
+
+form div {
+  margin-bottom: 10px;
+}
+
+label {
+  margin-right: 10px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="checkbox"] {
+  padding: 5px;
+  width: 200px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button[type="button"] {
+  background-color: #f44336;
+}
+
+button[type="button"]:hover {
+  background-color: #e41d1d;
+}
 </style>
