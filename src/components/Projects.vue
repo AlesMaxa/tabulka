@@ -5,7 +5,7 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Project</th>
+          <th>Project Name</th>
           <th>Description</th>
           <th>Tasks Count</th>
           <th>Persons Count</th>
@@ -28,11 +28,9 @@
         </tr>
       </tbody>
     </table>
-
     <button @click="showForm = !showForm">
-      {{ showForm ? "Hide Form" : "Add Project" }}
+      {{ showForm ? "Hide Form" : isEditing ? "Cancel Edit" : "Add Project" }}
     </button>
-
     <div v-if="showForm">
       <h2>{{ isEditing ? "Edit Project" : "Add New Project" }}</h2>
       <form @submit.prevent="isEditing ? updateProject() : addProject()">
@@ -63,9 +61,12 @@ export default {
       showForm: false,
       isEditing: false,
       currentProject: {
-        //  id: null,
+        id: null, // ID nebude odesíláno při přidání nového projektu
         project: "",
         description: "",
+        taskscount: null, // Tyto položky nebudou odesílány
+        personscount: null,
+        uncompletedcount: null,
       },
     };
   },
@@ -84,12 +85,17 @@ export default {
       }
     },
     async addProject() {
+      const projectToAdd = {
+        project: this.currentProject.project,
+        description: this.currentProject.description,
+        // taskscount, personscount, uncompletedcount nejsou součástí
+      };
       try {
         const response = await axios.post(
           "https://sdaapi.glabazna.eu/js6projects",
-          this.currentProject
+          projectToAdd
         );
-        this.projects.push(response.data);
+        this.projects.push(response.data.data);
         this.resetForm();
         this.showForm = false;
       } catch (error) {
@@ -102,15 +108,20 @@ export default {
       this.currentProject = { ...project };
     },
     async updateProject() {
+      const projectToUpdate = {
+        project: this.currentProject.project,
+        description: this.currentProject.description,
+        // taskscount, personscount, uncompletedcount nejsou součástí
+      };
       try {
         const response = await axios.put(
           `https://sdaapi.glabazna.eu/js6projects/${this.currentProject.id}`,
-          this.currentProject
+          projectToUpdate
         );
         const index = this.projects.findIndex(
           (p) => p.id === this.currentProject.id
         );
-        this.projects.splice(index, 1, response.data);
+        this.$set(this.projects, index, response.data.data);
         this.resetForm();
         this.showForm = false;
       } catch (error) {
@@ -128,9 +139,12 @@ export default {
     resetForm() {
       this.isEditing = false;
       this.currentProject = {
-        id: null,
+        id: null, // Resetování ID
         project: "",
         description: "",
+        taskscount: null,
+        personscount: null,
+        uncompletedcount: null,
       };
       this.showForm = false;
     },
