@@ -63,7 +63,7 @@ export default {
       showForm: false,
       isEditing: false,
       currentProject: {
-        id: null,
+        //  id: null,
         project: "",
         description: "",
       },
