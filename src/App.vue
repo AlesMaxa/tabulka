@@ -1,16 +1,26 @@
 <template>
   <div id="app">
-    <EmployeeTable />
+    <nav>
+      <router-link to="/">Tasks</router-link>
+      <router-link to="/projects">Projects</router-link>
+    </nav>
+    <router-view></router-view>
   </div>
 </template>
 
-<script>
-import EmployeeTable from "./components/EmployeeTable.vue";
+<style>
+nav {
+  margin-bottom: 20px;
+}
 
-export default {
-  name: "App",
-  components: {
-    EmployeeTable,
-  },
-};
-</script>
+nav a {
+  margin-right: 15px;
+  text-decoration: none;
+  color: #4caf50;
+}
+
+nav a.router-link-exact-active {
+  font-weight: bold;
+  color: #2e7d32;
+}
+</style>
