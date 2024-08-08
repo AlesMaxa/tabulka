@@ -99,7 +99,8 @@ export default {
     async fetchTasks() {
       try {
         const response = await axios.get("https://sdaapi.glabazna.eu/js6tasks");
-        this.tasks = response.data.data;
+        // Seřazení dat podle ID vzestupně
+        this.tasks = response.data.data.sort((a, b) => a.id - b.id);
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
@@ -127,7 +128,9 @@ export default {
           "https://sdaapi.glabazna.eu/js6tasks",
           taskToAdd
         );
-        this.tasks.push(response.data);
+        // Přidání nového úkolu a seřazení
+        this.tasks.push(response.data.data);
+        this.tasks.sort((a, b) => a.id - b.id); // Seřazení po přidání úkolu
         this.resetForm();
         this.showForm = false;
       } catch (error) {
@@ -154,7 +157,8 @@ export default {
           taskToUpdate
         );
         const index = this.tasks.findIndex((t) => t.id === this.currentTask.id);
-        this.tasks.splice(index, 1, response.data);
+        this.$set(this.tasks, index, response.data.data);
+        this.tasks.sort((a, b) => a.id - b.id); // Seřazení po aktualizaci úkolu
         this.resetForm();
         this.showForm = false;
       } catch (error) {
@@ -165,6 +169,7 @@ export default {
       try {
         await axios.delete(`https://sdaapi.glabazna.eu/js6tasks/${id}`);
         this.tasks = this.tasks.filter((t) => t.id !== id);
+        this.tasks.sort((a, b) => a.id - b.id); // Seřazení po smazání úkolu
       } catch (error) {
         console.error("Error deleting task:", error);
       }
