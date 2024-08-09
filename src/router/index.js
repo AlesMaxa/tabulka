@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Projects from "../components/Projects.vue";
 import Tasks from "../components/TaskTable.vue";
 import Persons from "../components/Persons.vue";
+import Positions from "../components/Positions.vue";
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: "/persons",
     name: "Persons",
     component: Persons,
+  },
+  {
+    path: "/positions",
+    name: "Positions",
+    component: Positions,
   },
 ];
 
